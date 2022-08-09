@@ -125,13 +125,18 @@ class Aseguradora{
 
     pagoDeCuota(dni,plan){
         const poliza = this.obtenerPolizas(dni,plan);
-        if(poliza.cuotaRestante>0){
+        if(poliza != undefined){
             poliza.cuotaRestante = poliza.cuotaRestante-1;
-            alert(`poliza vigente , cuotas restantes ${poliza.cuotaRestante} pago restante : ${this.pagoRestante(poliza)}`);
+            if(poliza.cuotaRestante>0){
+                return `poliza vigente , cuotas restantes ${poliza.cuotaRestante} pago restante : ${this.pagoRestante(poliza)}`;
+            }else{
+                this.bajaPoliza(poliza)
+                return "ultima cuota paga, finalizando poliza";
+            }             
         }else{
-            this.bajaPoliza(poliza)
-            alert("poliza vencida");
+            return "poliza no encontrada"
         }
+
 
     }
 
@@ -169,7 +174,7 @@ class Programa{
             opcion = parseInt( prompt(this.opcionesBuscarCliente))  
             
             if(opcion===1){
-                const dni = obtenerNumeroValido("dni");
+                const dni = this.obtenerNumeroValido("dni");
 
                 const cliente = this.aseguradora.obtenerCliente(dni);
     
@@ -194,7 +199,7 @@ class Programa{
             opcion = parseInt( prompt(this.opcionesBuscarPlanes))  
             
             if(opcion===1){
-                const idPlan = obtenerNumeroValido("codigo de plan");
+                const idPlan = this.obtenerNumeroValido("codigo de plan");
 
                 const plan = this.aseguradora.obtenerPlan(idPlan);
     
@@ -222,7 +227,7 @@ class Programa{
             opcion = parseInt( prompt(this.opcionesBuscarPoliza))  
             
             if(opcion===1){
-                const dni = obtenerNumeroValido("dni");
+                const dni = this.obtenerNumeroValido("dni");
 
                 const polizas = this.aseguradora.obtenerPolizasDni(dni);
     
@@ -236,7 +241,7 @@ class Programa{
                 }
 
             }if(opcion===2){
-                const idPlan = obtenerNumeroValido("codigo de plan");
+                const idPlan = this.obtenerNumeroValido("codigo de plan");
 
                 const polizas = this.aseguradora.obtenerPolizasPlan(idPlan);
     
@@ -249,8 +254,8 @@ class Programa{
                 }
      
             }if(opcion===3){
-                const idPlan = obtenerNumeroValido("codigo de plan");
-                const dni = obtenerNumeroValido("dni");
+                const idPlan = this.obtenerNumeroValido("codigo de plan");
+                const dni = this.obtenerNumeroValido("dni");
 
                 const polizas = this.aseguradora.obtenerPolizas(dni,idPlan);
     
@@ -272,11 +277,11 @@ class Programa{
         }while(isNaN(opcion)|| 0 >= opcion || opcion>4)
     }
     crearCliente(){
-        const dni =  obtenerNumeroValido("documento");
+        const dni =  this.obtenerNumeroValido("documento");
         if(this.aseguradora.obtenerCliente(dni) == undefined){
-            const nombre = obtenerTextoValido("nombre");
-            const apellido = obtenerTextoValido("apellido");
-            const edad = obtenerNumeroValido("edad");
+            const nombre = this.obtenerTextoValido("nombre");
+            const apellido = this.obtenerTextoValido("apellido");
+            const edad = this.obtenerNumeroValido("edad");
             this.aseguradora.clientes.push(new Cliente(dni, nombre, apellido,edad))
         }else{
            alert("el cliente con este dni ya existe");
@@ -284,8 +289,8 @@ class Programa{
     }
 
     crearPoliza(){
-        const dni =  obtenerNumeroValido("documento");
-        const idPlan =  obtenerNumeroValido("plan id");
+        const dni =  this.obtenerNumeroValido("documento");
+        const idPlan =  this.obtenerNumeroValido("plan id");
         if(this.aseguradora.obtenerCliente(dni) != undefined){
             if(this.aseguradora.obtenerPlan(idPlan) != undefined){
                 this.aseguradora.polizas.push(new Poliza(dni, idPlan))
@@ -297,8 +302,8 @@ class Programa{
         }
     }
     eliminarPoliza(){
-        const dni =  obtenerNumeroValido("documento");
-        const idPlan =  obtenerNumeroValido("plan id");
+        const dni =  this.obtenerNumeroValido("documento");
+        const idPlan =  this.obtenerNumeroValido("plan id");
         const poliza = this.aseguradora.obtenerPolizas(dni,idPlan);
         if(poliza!=undefined){
             this.aseguradora.bajaPoliza(poliza);
@@ -309,15 +314,9 @@ class Programa{
     }
 
     pagarCuota(){
-        const dni =  obtenerNumeroValido("documento");
-        const idPlan =  obtenerNumeroValido("plan id");
-        const poliza = this.aseguradora.obtenerPolizas(dni,idPlan);
-        if(poliza!=undefined){
-            this.aseguradora.pagoDeCuota(poliza);
-            alert("Poliza eliminada");
-        }else{
-            alert("Poliza no encontrada");
-        }
+        const dni =  this.obtenerNumeroValido("documento");
+        const idPlan =  this.obtenerNumeroValido("plan id");
+        alert(this.aseguradora.pagoDeCuota(dni,idPlan));
     }
 
     obtenerNumeroValido(descripcion){
