@@ -28,6 +28,12 @@ class Plan{
         this.premio = this.sumaAsegurada/this.basePremio;
         
     }
+    detalle(){
+        return `id:${this.id} 
+        descripcion:${this.descripcion} 
+        suma Asegurada ${this.sumaAsegurada} 
+        premio a pagar ${this.premio}`;
+    }
 }
 class Cliente{
     constructor(dni,nombre,apellido,edad){
@@ -35,6 +41,12 @@ class Cliente{
         this.nombre = nombre;
         this.apellido = apellido;
         this.edad = edad;
+    }
+    detalle(){
+        return `Nombre: ${this.nombre} 
+        apellido: ${this.apellido}
+        dni: ${this.dni}
+        edad: ${this.edad}`;
     }
 
 }
@@ -100,24 +112,24 @@ class Programa{
     constructor(){
         this.aseguradora = new Aseguradora();
         this.opcionesOperaciones = `Ingrese una opcion valida
-                        1)buscar cliente
-                        2)buscar planes
-                        3)buscar polizas
-                        4)crear cliente
-                        5)crear poliza
-                        6)baja poliza 
-                        7)salir`;
+            1)buscar cliente
+            2)buscar planes
+            3)buscar polizas
+            4)crear cliente
+            5)crear poliza
+            6)baja poliza 
+            7)salir`;
         this.opcionesBuscarcliente = `Ingrese una opcion valida
-                        1)buscar cliente por dni
-                        2)listar a todos los clientes por consola`;
+            1)buscar cliente por dni
+            2)listar a todos los clientes por consola`;
         this.opcionesBuscarPlanes = `Ingrese una opcion valida
-                        1)buscar plan por id
-                        2)listar a todos los planes`;
+            1)buscar plan por id
+            2)listar a todos los planes`;
         this.opcionesBuscarPoliza = `Ingrese una opcion valida
-                        1)buscar poliza por dni
-                        2)buscar poliza por plan
-                        3)buscar poliza por plan y dni
-                        4)listar a todos los planes`;
+            1)buscar poliza por dni
+            2)buscar poliza por plan
+            3)buscar poliza por plan y dni
+            4)listar a todos los planes`;
     
     }
 
@@ -133,19 +145,45 @@ class Programa{
     
                 if(cliente != undefined){
                     alert(`se encontro al cliente
-                            Nombre: ${cliente.nombre} apellido: ${cliente.apellido} dni: ${cliente.dni} edad: ${cliente.edad} `)
+                    ${cliente.detalle()} `)
                 }else{
                     alert("cliente no encontrado")
                 }
      
             }else{
                 for(const cliente of this.aseguradora.clientes){
-                    console.log(`Nombre: ${cliente.nombre} apellido: ${cliente.apellido} dni: ${cliente.dni} edad: ${cliente.edad} `);
+                    console.log(cliente.detalle());
                 }
             }
 
         }while(isNaN(opcion)|| 0 >= opcion || opcion>2)
     }
+    buscarPlan(){
+        let opcion = 0;
+        do{
+            opcion = parseInt( prompt(this.opcionesBuscarcliente))  
+            
+            if(opcion===1){
+                const idPlan = obtenerNumeroValido("codigo de plan");
+
+                const plan = this.aseguradora.obtenerPlan(idPlan);
+    
+                if(plan != undefined){
+                    alert(`se encontro el plan 
+                    ${plan.detalle()}`)
+                }else{
+                    alert("plan no encontrado")
+                }
+     
+            }else{
+                for(const plan of this.aseguradora.planes){
+                    console.log(plan.detalle());
+                }
+            }
+
+        }while(isNaN(opcion)|| 0 >= opcion || opcion>2)
+    }
+
     opreaciones(){
 
         let opcion = 0;
@@ -159,7 +197,7 @@ class Programa{
                     this.buscarCliente();
                     break;
                 case 2:
-                     
+                    this.buscarPlan();
                     break;
                 case 3:
                      
