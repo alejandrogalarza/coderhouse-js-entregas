@@ -1,8 +1,8 @@
 //DATOS INICIALES
 const planesLista = [
     {id:1,descripcion:"plan Basico" , multiplicador : 1},
-    {id:1,descripcion:"plan Medio", multiplicador : 2},
-    {id:1,descripcion:"plan full", multiplicador : 3},
+    {id:2,descripcion:"plan Medio", multiplicador : 2},
+    {id:3,descripcion:"plan full", multiplicador : 3},
 ]
 
 const clientesLista = [
@@ -55,6 +55,10 @@ class Poliza{
         this.dniCliente = dniCliente;
         this.idPlan = idPlan;        
     }
+    detalle(){
+        return `dni: ${this.dniCliente} 
+        plan: ${this.idPlan}`;
+    }
 }
 class Aseguradora{
     constructor(){
@@ -86,16 +90,22 @@ class Aseguradora{
         return this.planes.find(plan=>plan.id==id);
 
     }
-    ObtenerCliente(dni){
+    obtenerCliente(dni){
         return this.clientes.find(cliente=>cliente.dni==dni);
     }
 
-    ObtenerPoliza(dni,idPlan){
-        return this.polizas.find(poliza=>poliza.dniCliente==dni && poliza.idPlan==idPlan);
+    obtenerPolizasDni(dni){
+        return this.polizas.filter(poliza=>poliza.dniCliente==dni);
+    }
+    obtenerPolizasPlan(idPlan){
+        return this.polizas.filter(poliza=>poliza.idPlan==idPlan);
+    }
+    obtenerPolizas(dni,idPlan){
+        return this.polizas.filter(poliza=>poliza.dniCliente==dni && poliza.idPlan==idPlan);
     }
 
     crearPoliza(cliente,plan){
-        if(this.ObtenerCliente(cliente.dni)!=undefined && this.obtenerPlan(plan.id)!=undefined){
+        if(this.obtenerCliente(cliente.dni)!=undefined && this.obtenerPlan(plan.id)!=undefined){
             this.polizas.push(new Poliza(cliente.dni, plan.id));
             return true;
         }else{
@@ -119,9 +129,9 @@ class Programa{
             5)crear poliza
             6)baja poliza 
             7)salir`;
-        this.opcionesBuscarcliente = `Ingrese una opcion valida
+        this.opcionesBuscarCliente = `Ingrese una opcion valida
             1)buscar cliente por dni
-            2)listar a todos los clientes por consola`;
+            2)listar a todos los clientes`;
         this.opcionesBuscarPlanes = `Ingrese una opcion valida
             1)buscar plan por id
             2)listar a todos los planes`;
@@ -136,23 +146,23 @@ class Programa{
     buscarCliente(){
         let opcion = 0;
         do{
-            opcion = parseInt( prompt(this.opcionesBuscarcliente))  
+            opcion = parseInt( prompt(this.opcionesBuscarCliente))  
             
             if(opcion===1){
                 const dni = obtenerNumeroValido("dni");
 
-                const cliente = this.aseguradora.ObtenerCliente(dni);
+                const cliente = this.aseguradora.obtenerCliente(dni);
     
                 if(cliente != undefined){
-                    alert(`se encontro al cliente
-                    ${cliente.detalle()} `)
+                    alert(`se encontro al cliente ${cliente.detalle()} `)
                 }else{
                     alert("cliente no encontrado")
                 }
      
-            }else{
+            } 
+            if(opcion===2){
                 for(const cliente of this.aseguradora.clientes){
-                    console.log(cliente.detalle());
+                    alert(cliente.detalle());
                 }
             }
 
@@ -161,7 +171,7 @@ class Programa{
     buscarPlan(){
         let opcion = 0;
         do{
-            opcion = parseInt( prompt(this.opcionesBuscarcliente))  
+            opcion = parseInt( prompt(this.opcionesBuscarPlanes))  
             
             if(opcion===1){
                 const idPlan = obtenerNumeroValido("codigo de plan");
@@ -169,21 +179,104 @@ class Programa{
                 const plan = this.aseguradora.obtenerPlan(idPlan);
     
                 if(plan != undefined){
-                    alert(`se encontro el plan 
-                    ${plan.detalle()}`)
+                    alert(`se encontro el plan ${plan.detalle()}`)
                 }else{
                     alert("plan no encontrado")
                 }
      
-            }else{
+            }
+            if(opcion===2){
                 for(const plan of this.aseguradora.planes){
-                    console.log(plan.detalle());
+                    alert(plan.detalle());
                 }
             }
 
         }while(isNaN(opcion)|| 0 >= opcion || opcion>2)
     }
 
+
+
+    buscarPoliza(){
+        let opcion = 0;
+        do{
+            opcion = parseInt( prompt(this.opcionesBuscarPoliza))  
+            
+            if(opcion===1){
+                const dni = obtenerNumeroValido("dni");
+
+                const polizas = this.aseguradora.obtenerPolizasDni(dni);
+    
+                if(polizas.length != 0){
+                    polizas.forEach(poliza => {
+                        alert(`se encontro poliza ${poliza.detalle()}`)
+                    });
+                   
+                }else{
+                    alert("poliza no encontrado")
+                }
+
+            }if(opcion===2){
+                const idPlan = obtenerNumeroValido("codigo de plan");
+
+                const polizas = this.aseguradora.obtenerPolizasPlan(idPlan);
+    
+                if(polizas.length != 0){
+                    polizas.forEach(poliza => {
+                        alert(`se encontro poliza ${poliza.detalle()}`)
+                    });
+                }else{
+                    alert("plan no encontrado")
+                }
+     
+            }if(opcion===3){
+                const idPlan = obtenerNumeroValido("codigo de plan");
+                const dni = obtenerNumeroValido("dni");
+
+                const polizas = this.aseguradora.obtenerPolizas(dni,idPlan);
+    
+                if(polizas.length != 0){
+                    polizas.forEach(poliza => {
+                        alert(`se encontro poliza 
+                        ${poliza.detalle()}`)
+                    });
+                }else{
+                    alert("plan no encontrado")
+                }
+     
+            }if(opcion===4){
+                for(const poliza of this.aseguradora.polizas){
+                    alert(poliza.detalle());
+                }
+            }
+
+        }while(isNaN(opcion)|| 0 >= opcion || opcion>4)
+    }
+    crearCliente(){
+        const dni =  obtenerNumeroValido("documento");
+        if(this.aseguradora.obtenerCliente(dni) == undefined){
+            const nombre = obtenerTextoValido("nombre");
+            const apellido = obtenerTextoValido("apellido");
+            const edad = obtenerNumeroValido("edad");
+            this.aseguradora.clientes.push(new Cliente(dni, nombre, apellido,edad))
+        }else{
+           alert("el cliente con este dni ya existe");
+        }
+    }
+
+    crearPoliza(){
+        const dni =  obtenerNumeroValido("documento");
+        const idPlan =  obtenerNumeroValido("plan id");
+        if(this.aseguradora.obtenerCliente(dni) != undefined){
+           
+            if(this.aseguradora.obtenerPlan(dni) != undefined){
+                this.aseguradora.polizas.push(new Poliza(dni, idPlan))
+            }else{
+                alert("el plan con este id no existe");
+            }
+        }else{
+           alert("el cliente con este dni no existe");
+        }
+    }
     opreaciones(){
 
         let opcion = 0;
@@ -200,13 +293,13 @@ class Programa{
                     this.buscarPlan();
                     break;
                 case 3:
-                     
+                    this.buscarPoliza();
                     break;                        
                 case 4:
-
+                    this.crearCliente();
                     break;
                 case 5:
-
+                    this.crearPoliza();
                     break;
                 case 6:
 
@@ -252,10 +345,4 @@ const programa = new Programa();
 programa.opreaciones();
 
      
-    
-/*
-const nombre = obtenerTextoValido("nombre");
-const apellido = obtenerTextoValido("apellido");
-const dni =  obtenerNumeroValido("documento");
-const edad = obtenerNumeroValido("edad");
-*/
+   
