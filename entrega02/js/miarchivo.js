@@ -74,7 +74,6 @@ const comprarPlan=(comprarPlanCodigo)=>{
             }else{
                 alert("no se compro el plan");
             }
-           
 
         }else{
             alert("error, ya tienes un seguro")
