@@ -102,12 +102,12 @@ class Aseguradora{
     obtenerPolizasPlan(idPlan){
         return this.polizas.filter(poliza=>poliza.idPlan==idPlan);
     }
-    obtenerPolizas(dni,idPlan){
+    obtenerPoliza(dni,idPlan){
         return this.polizas.find(poliza=>poliza.dniCliente==dni && poliza.idPlan==idPlan);
     }
 
     crearPoliza(cliente,plan){
-        if(this.obtenerCliente(cliente.dni)!=undefined && this.obtenerPlan(plan.id)!=undefined){
+        if(this.obtenerCliente(cliente.dni)!=undefined && this.obtenerPlan(plan.id)!=undefined && this.obtenerPoliza(cliente.dni, plan.id)==undefined){
             this.polizas.push(new Poliza(cliente.dni, plan.id));
             return true;
         }else{
@@ -124,7 +124,7 @@ class Aseguradora{
     }
 
     pagoDeCuota(dni,plan){
-        const poliza = this.obtenerPolizas(dni,plan);
+        const poliza = this.obtenerPoliza(dni,plan);
         if(poliza != undefined){
             poliza.cuotaRestante = poliza.cuotaRestante-1;
             if(poliza.cuotaRestante>0){
@@ -257,7 +257,7 @@ class Programa{
                 const idPlan = this.obtenerNumeroValido("codigo de plan");
                 const dni = this.obtenerNumeroValido("dni");
 
-                const polizas = this.aseguradora.obtenerPolizas(dni,idPlan);
+                const polizas = this.aseguradora.obtenerPoliza(dni,idPlan);
     
                 if(polizas.length != 0){
                     polizas.forEach(poliza => {
@@ -291,9 +291,16 @@ class Programa{
     crearPoliza(){
         const dni =  this.obtenerNumeroValido("documento");
         const idPlan =  this.obtenerNumeroValido("plan id");
-        if(this.aseguradora.obtenerCliente(dni) != undefined){
-            if(this.aseguradora.obtenerPlan(idPlan) != undefined){
-                this.aseguradora.polizas.push(new Poliza(dni, idPlan))
+        const cliente = this.aseguradora.obtenerCliente(dni);
+        const plan = this.aseguradora.obtenerPlan(idPlan);
+
+        if(cliente != undefined){
+            if(plan != undefined){
+                if(this.aseguradora.crearPoliza(cliente, plan)){
+                    alert("carga de poliza exitosa");
+                }else{
+                    alert("fallo carga de poliza");
+                }
             }else{
                 alert("el plan con este id no existe");
             }
@@ -304,7 +311,7 @@ class Programa{
     eliminarPoliza(){
         const dni =  this.obtenerNumeroValido("documento");
         const idPlan =  this.obtenerNumeroValido("plan id");
-        const poliza = this.aseguradora.obtenerPolizas(dni,idPlan);
+        const poliza = this.aseguradora.obtenerPoliza(dni,idPlan);
         if(poliza!=undefined){
             this.aseguradora.bajaPoliza(poliza);
             alert("Poliza eliminada");
