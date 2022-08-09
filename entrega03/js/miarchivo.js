@@ -101,7 +101,7 @@ class Aseguradora{
         return this.polizas.filter(poliza=>poliza.idPlan==idPlan);
     }
     obtenerPolizas(dni,idPlan){
-        return this.polizas.filter(poliza=>poliza.dniCliente==dni && poliza.idPlan==idPlan);
+        return this.polizas.find(poliza=>poliza.dniCliente==dni && poliza.idPlan==idPlan);
     }
 
     crearPoliza(cliente,plan){
@@ -267,8 +267,7 @@ class Programa{
         const dni =  obtenerNumeroValido("documento");
         const idPlan =  obtenerNumeroValido("plan id");
         if(this.aseguradora.obtenerCliente(dni) != undefined){
-           
-            if(this.aseguradora.obtenerPlan(dni) != undefined){
+            if(this.aseguradora.obtenerPlan(idPlan) != undefined){
                 this.aseguradora.polizas.push(new Poliza(dni, idPlan))
             }else{
                 alert("el plan con este id no existe");
@@ -277,8 +276,37 @@ class Programa{
            alert("el cliente con este dni no existe");
         }
     }
-    opreaciones(){
+    eliminarPoliza(){
+        const dni =  obtenerNumeroValido("documento");
+        const idPlan =  obtenerNumeroValido("plan id");
+        const poliza = this.aseguradora.obtenerPolizas(dni,idPlan);
+        if(poliza!=undefined){
+            this.aseguradora.bajaPoliza(poliza)
+            alert("Poliza eliminada");
+        }else{
+            alert("Poliza no encontrada");
+        }
+    }
 
+    obtenerNumeroValido(descripcion){
+
+        let numero = parseInt( prompt(`${descripcion}:`).trim() )
+        while(isNaN(numero) || (!isNaN(numero) && numero <= 0 )){
+            numero = parseInt( prompt(`campo ${descripcion} es invalido, ingrese nuevamente :`) )
+        }
+        return numero;
+    }
+    
+    obtenerTextoValido(descripcion){
+    
+        let texto =  prompt(`${descripcion}:`).trim()
+        while(texto.length == 0){
+            texto =  prompt(`campo ${descripcion} es invalido, ingrese nuevamente :`) 
+        }
+        return texto;
+    }
+    
+    opreaciones(){
         let opcion = 0;
         do {
             do{
@@ -302,12 +330,8 @@ class Programa{
                     this.crearPoliza();
                     break;
                 case 6:
-
-                    break;
-                case 7:
-
-                    break;
-                                        
+                    this.eliminarPoliza();
+                    break;            
                 default:
                     break;   
                 }
@@ -318,28 +342,6 @@ class Programa{
     }
 
 }
-
-//funciones utiles
-const obtenerNumeroValido =  (descripcion)=>{
-
-    let numero = parseInt( prompt(`${descripcion}:`).trim() )
-    while(isNaN(numero) || (!isNaN(numero) && numero <= 0 )){
-        numero = parseInt( prompt(`campo ${descripcion} es invalido, ingrese nuevamente :`) )
-    }
-    return numero;
-}
-
-const obtenerTextoValido = (descripcion)=>{
-
-    let texto =  prompt(`${descripcion}:`).trim()
-    while(texto.length == 0){
-        texto =  prompt(`campo ${descripcion} es invalido, ingrese nuevamente :`) 
-    }
-    return texto;
-}
-
- 
- 
 
 const programa = new Programa();
 programa.opreaciones();
